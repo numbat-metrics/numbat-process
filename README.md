@@ -2,10 +2,13 @@
 Monitor your process with numbat
 
 ```js
-var emitter = ... // emiter can be an instance or options to pass to numbat-emitter
 var numproc = require('numbat-process')
 
-numproc('myapplication',emitter)
+numproc({
+    uri: 'tcp://localhost:8000',
+    app: 'myapplication',
+    node: 'www:8081'
+})
 
 ```
 
@@ -24,11 +27,9 @@ now every 10 seconds your application will emit these metrics!
 
 ```
 
-
 ## API
 
-- `var stop = module.exports(prefix,options,interval)`
-  - prefix, string metrics prefix. required.
+- `var stop = module.exports(options,interval)`
   - options, emitter object or config object for numbat-emitter
   - interval, number ms to poll and report stats. default 10000
   - RETURN: stop function. call it to stop emitting metrics.

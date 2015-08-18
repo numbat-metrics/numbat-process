@@ -6,7 +6,7 @@ test("gathers proc metrics",function(t){
 
   var metrics = {}
 
-  var stop = numproc('testing',{
+  var stop = numproc({
     metric:function(key,value){
       metrics[key] = value
     }
@@ -15,14 +15,14 @@ test("gathers proc metrics",function(t){
   setTimeout(function(){
 
     var keys = [
-      'testing.memory.rss'
-      ,'testing.memory.heapTotal'
-      ,'testing.memory.heapUsed'
-      ,'testing.js.eventloop'
-      ,'testing.js.handles'
-      ,'testing.js.requests'
-      ,'testing.fds.count'
-      ,'testing.cpu.percent'
+      'memory.rss'
+      ,'memory.heapTotal'
+      ,'memory.heapUsed'
+      ,'js.eventloop'
+      ,'js.handles'
+      ,'js.requests'
+      ,'fds.count'
+      ,'cpu.percent'
     ]
 
     keys.forEach(function(key){
