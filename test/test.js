@@ -10,7 +10,7 @@ test("gathers proc metrics",function(t){
     metric:function(key,value){
       metrics[key] = value
     }
-  },1000)
+  },500)
 
   setTimeout(function(){
 
@@ -22,6 +22,7 @@ test("gathers proc metrics",function(t){
       ,'testing.js.handles'
       ,'testing.js.requests'
       ,'testing.fds.count'
+      ,'testing.cpu.percent'
     ]
 
     keys.forEach(function(key){

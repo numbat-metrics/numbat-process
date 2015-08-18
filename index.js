@@ -67,6 +67,7 @@ function _interval(fn,duration){
     i = setTimeout(function(){
       fn(loop)
     },duration)
+    i.unref()
   }())
 
   return function(){
