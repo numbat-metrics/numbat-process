@@ -23,14 +23,18 @@ module.exports = function(options,interval){
 
   // cpu - never reports 0.  on a graph zero means it's failing to report anything
 
-  var cpuStop = cpuPercent.pid(process.pid,function(err,percent){
+  var percent = 0;
+
+  var cpuStop = cpuPercent.pid(process.pid,function(err,_percent){
     if(err) percent = 0
-    metric(emitter,'cpu.percent',percent<1?1:percent)
-  },interval||DEFAULT_TIMEOUT)
+    percent = _percent<1?1:_percent
+  },options.cpuInterval||1000)
 
   cpuStop.unref()
 
   var stop = _interval(function(cb){
+
+    metric(emitter,'cpu.percent',percent)
 
     // memory
     var mem = process.memoryUsage();
