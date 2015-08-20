@@ -6,8 +6,7 @@ var numproc = require('numbat-process')
 
 numproc({
     uri: 'tcp://localhost:8000',
-    app: 'myapplication',
-    node: 'www:8081'
+    app: 'myapplication'
 })
 
 ```

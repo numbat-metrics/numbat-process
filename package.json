@@ -1,6 +1,6 @@
 {
   "name": "numbat-process",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Monitor your process with numbat",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "blocked": "^1.1.0",
-    "cpu-percent": "^2.0.0",
+    "cpu-percent": "^2.0.1",
     "numbat-emitter": "^2.0.1",
     "procfs-stats": "0.0.4"
   }

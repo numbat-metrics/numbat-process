@@ -27,6 +27,8 @@ module.exports = function(options,interval){
     emitter.metric('cpu.percent',percent<1?1:percent)
   },interval||DEFAULT_TIMEOUT)
 
+  cpuStop.unref()
+
   var stop = _interval(function(cb){
 
     // memory
