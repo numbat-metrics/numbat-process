@@ -71,25 +71,26 @@ module.exports = function(options,interval){
 }
 
 blocked(function(ms){
+  
   var keys = Object.keys(eventLoopLag);
   var k;
-  for(var i=0;i<eventLoopLag.length;++i){
+  for(var i=0;i<keys.length;++i){
     k = keys[i]
-    eventLoopLag[k].push([ms,Date.now()])
+    eventLoopLag[k].push(ms)
     if(eventLoopLag[k].length > 20) eventLoopLag[k].shift()
   }
 })
 
 function computeLag(id){
+
   var lag = eventLoopLag[id]
   if(!lag) return -1
+  if(!lag.length) return 0
 
-  eventLoopLag = []
-  var start;
+  eventLoopLag[id] = []
   var sum = 0;
   for(var i=0;i<lag.length;++i){
-    if(!start) start = lag[i][1]
-    sum += lag[i][0]
+    sum += lag[i]
   }
 
   return sum/lag.length
