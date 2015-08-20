@@ -23,7 +23,8 @@ module.exports = function(options,interval){
 
   // cpu - never reports 0.  on a graph zero means it's failing to report anything
 
-  var cpuStop = cpuPercent.pid(process.pid,function(percent){
+  var cpuStop = cpuPercent.pid(process.pid,function(err,percent){
+    if(err) percent = 0
     metric(emitter,'cpu.percent',percent<1?1:percent)
   },interval||DEFAULT_TIMEOUT)
 
