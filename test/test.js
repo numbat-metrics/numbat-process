@@ -7,8 +7,8 @@ test("gathers proc metrics",function(t){
   var metrics = {}
 
   var stop = numproc({
-    metric:function(key,value){
-      metrics[key] = value
+    metric:function(attrs){
+      metrics[attrs.name] = attrs.value
     }
   },500)
 

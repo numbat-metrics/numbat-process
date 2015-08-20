@@ -24,7 +24,7 @@ module.exports = function(options,interval){
   // cpu - never reports 0.  on a graph zero means it's failing to report anything
 
   var cpuStop = cpuPercent.pid(process.pid,function(percent){
-    emitter.metric('cpu.percent',percent<1?1:percent)
+    metric(emitter,'cpu.percent',percent<1?1:percent)
   },interval||DEFAULT_TIMEOUT)
 
   cpuStop.unref()
@@ -34,17 +34,17 @@ module.exports = function(options,interval){
     // memory
     var mem = process.memoryUsage();
     Object.keys(mem).forEach(function(k){
-      emitter.metric('memory.'+k,mem[k])
+      metric(emitter,'memory.'+k,mem[k])
     });
 
     // event loop lag
-    emitter.metric('js.eventloop',eventLoopLag)
-    emitter.metric('js.handles',process._getActiveHandles().length)
-    emitter.metric('js.requests',process._getActiveRequests().length)
+    metric(emitter,'js.eventloop',eventLoopLag)
+    metric(emitter,'js.handles',process._getActiveHandles().length)
+    metric(emitter,'js.requests',process._getActiveRequests().length)
 
     // fds
     procStats.fds(function(err,fds){
-      if(fds) emitter.metric('fds.count',fds.length||0)
+      if(fds) metric(emitter,'fds.count',fds.length||0)
       cb();
     })
 
@@ -80,3 +80,9 @@ function _interval(fn,duration){
 }
 
 
+function metric(em,name,value){
+  em.metric({
+    name: name,
+    value: value === undefined?1:value 
+  })
+}
