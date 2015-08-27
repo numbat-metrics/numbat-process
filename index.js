@@ -70,6 +70,9 @@ module.exports = function(options,interval){
 
 }
 
+
+module.exports.Emitter = Emitter
+
 blocked(function(ms){
   
   var keys = Object.keys(eventLoopLag);
