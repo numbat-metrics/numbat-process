@@ -28,7 +28,7 @@
   "dependencies": {
     "blocked": "^1.2.1",
     "cpu-percent": "^2.0.1",
-    "numbat-emitter": "^3.2.0",
+    "numbat-emitter": "^3.2.1",
     "procfs-stats": "~0.0.5"
   }
 }
