@@ -6,9 +6,6 @@ var procfs = require('procfs-stats')
 
 var DEFAULT_TIMEOUT = 10000
 
-var lagIdInc = 0
-var eventLoopLag = {}
-
 module.exports = function(options,interval){
 
   var emitter
@@ -32,10 +29,6 @@ module.exports = function(options,interval){
   },options.cpuInterval||1000)
 
   cpuStop.unref()
-
-  // get new event loop lag data array
-  var lagId = ++lagIdInc
-  eventLoopLag[lagId] = []
  
   var stop = _interval(function(cb){
 
@@ -47,8 +40,7 @@ module.exports = function(options,interval){
       metric(emitter,'memory.'+k,mem[k])
     });
 
-    // event loop lag
-    var lag = computeLag(lagId)  
+    var lag = computeLag()  
 
     metric(emitter,'js.eventloop',lag)
     metric(emitter,'js.handles',process._getActiveHandles().length)
@@ -65,7 +57,6 @@ module.exports = function(options,interval){
   return function(){
     stop()
     cpuStop()
-    delete eventLoopLag[lagId]   
   }
 
 }
@@ -73,30 +64,24 @@ module.exports = function(options,interval){
 
 module.exports.Emitter = Emitter
 
+eventLoopLagKey = -1
+eventLoopLag = (new Array(20)).map(function(){ return 0 })
+
 blocked(function(ms){
-  
-  var keys = Object.keys(eventLoopLag);
-  var k;
-  for(var i=0;i<keys.length;++i){
-    k = keys[i]
-    eventLoopLag[k].push(ms)
-    if(eventLoopLag[k].length > 20) eventLoopLag[k].shift()
-  }
-})
+  eventLoopLagKey++
+  if(eventLoopLagKey > 20) eventLoopLagKey = 0
+  eventLoopLag[eventLoopLagKey] = ms
+},{interval:200})
 
-function computeLag(id){
+function computeLag(){
 
-  var lag = eventLoopLag[id]
-  if(!lag) return -1
-  if(!lag.length) return 0
-
-  eventLoopLag[id] = []
   var sum = 0;
-  for(var i=0;i<lag.length;++i){
-    sum += lag[i]
+  for(var i=0;i<eventLoopLag.length;++i){
+    sum += eventLoopLag[i]
   }
 
-  return sum/lag.length
+  if(sum === 0) return 0
+  return sum/eventLoopLag.length
 
 }
 
