@@ -1,43 +1,38 @@
+'use strict'
 var test = require('tape')
 
-var numproc = require('../') 
+var procfsStats = require('procfs-stats')
+var numproc = require('../')
 
-test("gathers proc metrics",function(t){
-
+test('gathers proc metrics', function (t) {
   var metrics = {}
 
   var stop = numproc({
-    metric:function(attrs){
+    metric: function (attrs) {
       metrics[attrs.name] = attrs.value
     }
-  },500)
+  }, 500)
 
-  setTimeout(function(){
-
+  setTimeout(function () {
     var keys = [
-      'memory.rss'
-      ,'memory.heapTotal'
-      ,'memory.heapUsed'
-      ,'js.eventloop'
-      ,'js.handles'
-      ,'js.requests'
-      ,'fds.count'
-      ,'cpu.percent'
+      'memory.rss',
+      'memory.heapTotal',
+      'memory.heapUsed',
+      'js.eventloop',
+      'js.handles',
+      'js.requests',
+      'cpu.percent'
     ]
 
-    keys.forEach(function(key){
-      t.ok(metrics[key] !== undefined,'should track '+key)
+    if (procfsStats.works) {
+      keys.push('fds.count')
+    }
+
+    keys.forEach(function (key) {
+      t.ok(metrics[key] !== undefined, 'should track ' + key)
     })
 
     stop()
-    t.end();
-
-  },1020)
-
+    t.end()
+  }, 1020)
 })
-
-
-
-
-
-
