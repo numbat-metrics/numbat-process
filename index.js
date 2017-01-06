@@ -60,11 +60,16 @@ module.exports = function (options, interval) {
 module.exports.Emitter = Emitter
 
 var eventLoopLagKey = 0
-var eventLoopLag = (new Array(20)).map(function () { return 0 })
+var eventLoopLag = []
+var eventLoopLength = 20
+
+while (eventLoopLag.length < eventLoopLength) {
+  eventLoopLag[eventLoopLag.length] = 0
+}
 
 blocked(function (ms) {
   eventLoopLag[eventLoopLagKey] = ms
-  eventLoopLagKey = (eventLoopLagKey + 1) % 20
+  eventLoopLagKey = (eventLoopLagKey + 1) % eventLoopLength
 }, {interval: 200})
 
 function computeLag () {
