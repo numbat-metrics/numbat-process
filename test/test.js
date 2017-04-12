@@ -1,6 +1,6 @@
 var test = require('tape')
 
-var numproc = require('../') 
+var numproc = require('../')
 
 test("gathers proc metrics",function(t){
 
@@ -35,9 +35,3 @@ test("gathers proc metrics",function(t){
   },1020)
 
 })
-
-
-
-
-
-
