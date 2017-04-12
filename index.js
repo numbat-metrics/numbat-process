@@ -59,13 +59,17 @@ module.exports = function (options, interval) {
 
 module.exports.Emitter = Emitter
 
-var eventLoopLagKey = -1
-var eventLoopLag = (new Array(20)).map(function () { return 0 })
+var eventLoopLagKey = 0
+var eventLoopLag = []
+var eventLoopLength = 20
+
+while (eventLoopLag.length < eventLoopLength) {
+  eventLoopLag[eventLoopLag.length] = 0
+}
 
 blocked(function (ms) {
-  eventLoopLagKey++
-  if (eventLoopLagKey > 20) eventLoopLagKey = 0
   eventLoopLag[eventLoopLagKey] = ms
+  eventLoopLagKey = (eventLoopLagKey + 1) % eventLoopLength
 }, {interval: 200})
 
 function computeLag () {
@@ -101,6 +105,6 @@ function _interval (fn, duration) {
 function metric (em, name, value) {
   em.metric({
     name: name,
-    value: value === undefined ? 1 : value
+    value: (isNaN(value) || value === null) ? 1 : value
   })
 }
