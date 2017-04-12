@@ -1,6 +1,6 @@
 {
   "name": "numbat-process",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Monitor your process with numbat",
   "main": "index.js",
   "scripts": {
