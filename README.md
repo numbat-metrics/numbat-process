@@ -1,5 +1,8 @@
 # numbat-process
+
 Monitor your process with numbat
+
+[![Build Status](https://travis-ci.org/numbat-metrics/numbat-process.svg?branch=master)](https://travis-ci.org/numbat-metrics/numbat-process)
 
 ```js
 var numproc = require('numbat-process')
@@ -32,4 +35,3 @@ now every 10 seconds your application will emit these metrics!
   - options, emitter object or config object for numbat-emitter
   - interval, number ms to poll and report stats. default 10000
   - RETURN: stop function. call it to stop emitting metrics.
-
