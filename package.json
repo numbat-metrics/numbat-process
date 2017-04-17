@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/npm/numbat-process#readme",
   "devDependencies": {
-    "tape": "^4.2.0"
+    "tape": "^4.6.0"
   },
   "dependencies": {
     "blocked": "^1.2.1",
