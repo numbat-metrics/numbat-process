@@ -8,7 +8,8 @@ test('gathers proc metrics', function (t) {
   var stop = numproc({
     metric: function (attrs) {
       metrics[attrs.name] = attrs.value
-    }
+    },
+    disk: true// ['/']
   }, 500)
 
   setTimeout(function () {
@@ -20,9 +21,14 @@ test('gathers proc metrics', function (t) {
       'js.handles',
       'js.requests',
       'fds.count',
-      'cpu.percent'
+      'cpu.percent',
+      'disk.use./',
+      'disk.available./',
+      'disk.inode-use./',
+      'disk.inode-available./'
     ]
 
+    console.log(metrics)
     keys.forEach(function (key) {
       t.ok(metrics[key] !== undefined, 'should track ' + key)
     })

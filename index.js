@@ -3,6 +3,7 @@ var blocked = require('blocked')
 var cpuPercent = require('cpu-percent')
 var Emitter = require('numbat-emitter')
 var procfs = require('procfs-stats')
+var df = require('./lib/df')
 
 var DEFAULT_TIMEOUT = 10000
 
@@ -29,6 +30,8 @@ module.exports = function (options, interval) {
 
   cpuStop.unref()
 
+  var dfing = 0
+
   var stop = _interval(function (cb) {
     metric(emitter, 'cpu.percent', percent)
 
@@ -49,6 +52,32 @@ module.exports = function (options, interval) {
       if (fds) metric(emitter, 'fds.count', fds.length || 0)
       cb()
     })
+
+    if (dfing === 0 && options.disk) {
+      dfing = 2
+      df.df([], function (err, data) {
+        dfing--
+        if (err) return
+
+        var report = filterDisks(df.parse(data) || [], options.disk)
+        report.forEach(function (o) {
+          metric(emitter, 'disk.use.' + o.mounted, +(o['use%'] || '0').replace(/[^\d]/g, ''))
+          metric(emitter, 'disk.available.' + o.mounted, +o.available)
+        })
+      })
+
+      df.df(['-i'], function (err, data) {
+        dfing--
+        if (err) return
+
+        var report = filterDisks(df.parse(data) || [], options.disk)
+        report.forEach(function (o) {
+          // mac||linux
+          metric(emitter, 'disk.inode-use.' + o.mounted, +(o['%iused'] || o['iused%'] || '0').replace(/[^\d]/g, ''))
+          metric(emitter, 'disk.inode-available.' + o.mounted, +(o['ifree'] || 0))
+        })
+      })
+    }
   }, interval || DEFAULT_TIMEOUT)
 
   return function () {
@@ -99,5 +128,17 @@ function metric (em, name, value) {
   em.metric({
     name: name,
     value: value === undefined ? 1 : value
+  })
+}
+
+function filterDisks (disks, filter) {
+  return disks.filter((o) => {
+    // filter only specific mounts.
+    if (filter && Array.isArray(filter)) {
+      return filter.indexOf(o.mounted) === 0
+    }
+
+    // filter all things that look like normal storage disks
+    return o.filesystem.indexOf('/dev') === 0
   })
 }
