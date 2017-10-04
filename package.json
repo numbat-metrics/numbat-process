@@ -4,7 +4,7 @@
   "description": "Monitor your process with numbat",
   "main": "index.js",
   "scripts": {
-    "test": "tape test/*.js"
+    "test": "tape test/*.js && standard"
   },
   "repository": {
     "type": "git",
@@ -23,11 +23,13 @@
   },
   "homepage": "https://github.com/npm/numbat-process#readme",
   "devDependencies": {
+    "standard": "^10.0.3",
     "tape": "^4.2.0"
   },
   "dependencies": {
     "blocked": "^1.2.1",
     "cpu-percent": "^2.0.1",
+    "end-of-stream": "^1.4.0",
     "numbat-emitter": "^4.0.0",
     "procfs-stats": "~0.0.5"
   }

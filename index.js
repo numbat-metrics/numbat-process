@@ -6,12 +6,11 @@ var procfs = require('procfs-stats')
 
 var DEFAULT_TIMEOUT = 10000
 
-module.exports = function(options,interval){
-
+module.exports = function (options, interval) {
   var emitter
-  options = options||{}
+  options = options || {}
 
-  if(typeof options.metric === 'function'){
+  if (typeof options.metric === 'function') {
     emitter = options
   } else {
     emitter = new Emitter(options)
@@ -23,90 +22,82 @@ module.exports = function(options,interval){
 
   var percent = 0
 
-  var cpuStop = cpuPercent.pid(process.pid,function(err,_percent){
-    if(err) percent = 0
-    percent = _percent<1?1:_percent
-  },options.cpuInterval||1000)
+  var cpuStop = cpuPercent.pid(process.pid, function (err, _percent) {
+    if (err) percent = 0
+    percent = _percent < 1 ? 1 : _percent
+  }, options.cpuInterval || 1000)
 
   cpuStop.unref()
- 
-  var stop = _interval(function(cb){
 
-    metric(emitter,'cpu.percent',percent)
+  var stop = _interval(function (cb) {
+    metric(emitter, 'cpu.percent', percent)
 
     // memory
-    var mem = process.memoryUsage();
-    Object.keys(mem).forEach(function(k){
-      metric(emitter,'memory.'+k,mem[k])
-    });
-
-    var lag = computeLag()  
-
-    metric(emitter,'js.eventloop',lag)
-    metric(emitter,'js.handles',process._getActiveHandles().length)
-    metric(emitter,'js.requests',process._getActiveRequests().length)
-
-    // fds
-    procStats.fds(function(err,fds){
-      if(fds) metric(emitter,'fds.count',fds.length||0)
-      cb();
+    var mem = process.memoryUsage()
+    Object.keys(mem).forEach(function (k) {
+      metric(emitter, 'memory.' + k, mem[k])
     })
 
-  },interval||DEFAULT_TIMEOUT)
+    var lag = computeLag()
 
-  return function(){
+    metric(emitter, 'js.eventloop', lag)
+    metric(emitter, 'js.handles', process._getActiveHandles().length)
+    metric(emitter, 'js.requests', process._getActiveRequests().length)
+
+    // fds
+    procStats.fds(function (_err, fds) {
+      if (fds) metric(emitter, 'fds.count', fds.length || 0)
+      cb()
+    })
+  }, interval || DEFAULT_TIMEOUT)
+
+  return function () {
     stop()
     cpuStop()
   }
-
 }
-
 
 module.exports.Emitter = Emitter
 
-eventLoopLagKey = -1
-eventLoopLag = (new Array(20)).map(function(){ return 0 })
+var eventLoopLagKey = -1
+var eventLoopLag = (new Array(20)).map(function () { return 0 })
 
-blocked(function(ms){
+blocked(function (ms) {
   eventLoopLagKey++
-  if(eventLoopLagKey > 20) eventLoopLagKey = 0
+  if (eventLoopLagKey > 20) eventLoopLagKey = 0
   eventLoopLag[eventLoopLagKey] = ms
-},{interval:200})
+}, {interval: 200})
 
-function computeLag(){
-
-  var sum = 0;
-  for(var i=0;i<eventLoopLag.length;++i){
+function computeLag () {
+  var sum = 0
+  for (var i = 0; i < eventLoopLag.length; ++i) {
     sum += eventLoopLag[i]
   }
 
-  if(sum === 0) return 0
-  return sum/eventLoopLag.length
-
+  if (sum === 0) return 0
+  return sum / eventLoopLag.length
 }
 
 // setTimeout loop with callback to prevent metrics gathering cycles from stacking.
-function _interval(fn,duration){
+function _interval (fn, duration) {
   var i, stopped;
-  (function loop(){
-    if(stopped) return;
-    i = setTimeout(function(){
+  (function loop () {
+    if (stopped) return
+    i = setTimeout(function () {
       fn(loop)
-    },duration)
+    }, duration)
     i.unref()
   }())
 
-  return function(){
-    stopped = true;
+  return function () {
+    stopped = true
     clearTimeout(i)
   }
-
 }
 
-
-function metric(em,name,value){
+function metric (em, name, value) {
   em.metric({
     name: name,
-    value: value === undefined?1:value 
+    value: value === undefined ? 1 : value
   })
 }
