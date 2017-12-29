@@ -38,7 +38,7 @@ test('gathers proc metrics', function (t) {
 })
 
 function tracker () {
-  const metrics = {}
+  var metrics = {}
 
   return {
     handler: function (attrs) {
@@ -50,12 +50,12 @@ function tracker () {
 
 test('should be disabled when options.disabled === true', function (t) {
   process.env.NUMBAT_PROCESS_DISABLED = false
-  const {handler, metrics} = tracker()
-  const stop = numproc({metric: handler, disabled: true}, 500)
+  const track = tracker()
+  const stop = numproc({metric: track.handler, disabled: true}, 500)
   t.ok(stop.disabled === true, 'should be disabled')
 
   setTimeout(function () {
-    t.ok(Object.keys(metrics).length === 0, 'should not collect any metrics when disabled')
+    t.ok(Object.keys(track.metrics).length === 0, 'should not collect any metrics when disabled')
 
     stop()
     t.end()
@@ -64,32 +64,31 @@ test('should be disabled when options.disabled === true', function (t) {
 
 test('should be disabled when NUMBAT_PROCESS_DISABLED === true', function (t) {
   process.env.NUMBAT_PROCESS_DISABLED = true
-  const {handler, metrics} = tracker()
-  const stop = numproc({metric: handler}, 500)
+  const track = tracker()
+  const stop = numproc({metric: track.handler}, 500)
   t.ok(stop.disabled === true, 'should be disabled')
 
   setTimeout(function () {
-    t.ok(Object.keys(metrics).length === 0, 'should not collect any metrics when disabled')
+    t.ok(Object.keys(track.metrics).length === 0, 'should not collect any metrics when disabled')
 
     stop()
     t.end()
   }, 1020)
 })
 
-
 test('should be prefer options.disabled to NUMBAT_PROCESS_DISABLED', function (t) {
   {
     process.env.NUMBAT_PROCESS_DISABLED = false
-    const {handler, metrics} = tracker()
-    const stop = numproc({metric: handler, disabled: true}, 500)
+    const track = tracker()
+    const stop = numproc({metric: track.handler, disabled: true}, 500)
     t.ok(stop.disabled === true, 'should be disabled')
     stop()
   }
 
   {
     process.env.NUMBAT_PROCESS_DISABLED = true
-    const {handler, metrics} = tracker()
-    const stop = numproc({metric: handler, disabled: false}, 500)
+    const track = tracker()
+    const stop = numproc({metric: track.handler, disabled: false}, 500)
     t.ok(stop.disabled === undefined, 'should NOT be disabled')
     stop()
   }

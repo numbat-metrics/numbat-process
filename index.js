@@ -8,7 +8,7 @@ var procfs = require('procfs-stats')
 var DEFAULT_TIMEOUT = 10000
 
 function coalesce (values = []) {
-  const value =  (values instanceof Array)
+  var value = (values instanceof Array)
     ? values.filter(x => x !== null && x !== undefined)[0]
     : values
 
@@ -22,7 +22,7 @@ module.exports = function (options, interval) {
 
   // prevent setup if disabled by configuration override
   if (disabled === true) {
-    const noop = () => {}
+    var noop = () => {}
     noop.disabled = true
     return noop
   }

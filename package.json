@@ -4,6 +4,7 @@
   "description": "Monitor your process with numbat",
   "main": "index.js",
   "scripts": {
+    "lint": "standard",
     "test": "tape test/*.js && standard"
   },
   "repository": {
