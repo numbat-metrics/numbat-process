@@ -7,9 +7,25 @@ var procfs = require('procfs-stats')
 
 var DEFAULT_TIMEOUT = 10000
 
+function coalesce (values = []) {
+  const value =  (values instanceof Array)
+    ? values.filter(x => x !== null && x !== undefined)[0]
+    : values
+
+  return Boolean(value)
+}
+
 module.exports = function (options, interval) {
   var emitter
   options = options || {}
+  var disabled = coalesce([options.disabled, process.env.NUMBAT_PROCESS_DISABLED, false])
+
+  // prevent setup if disabled by configuration override
+  if (disabled === true) {
+    const noop = () => {}
+    noop.disabled = true
+    return noop
+  }
 
   if (typeof options.metric === 'function') {
     emitter = options
