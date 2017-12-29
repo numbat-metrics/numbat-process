@@ -7,7 +7,7 @@ var procfs = require('procfs-stats')
 
 var DEFAULT_TIMEOUT = 10000
 
-function coalesce (values = []) {
+function coalesce (values) {
   var value = (values instanceof Array)
     ? values.filter(x => x !== null && x !== undefined)[0]
     : values
