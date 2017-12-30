@@ -1,5 +1,7 @@
 # numbat-process
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/numbat-metrics/numbat-process.svg)](https://greenkeeper.io/)
+
 Monitor your process with numbat
 
 [![Build Status](https://travis-ci.org/numbat-metrics/numbat-process.svg?branch=master)](https://travis-ci.org/numbat-metrics/numbat-process)
