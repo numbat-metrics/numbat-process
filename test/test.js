@@ -77,21 +77,17 @@ test('should be disabled when NUMBAT_PROCESS_DISABLED === true', function (t) {
 })
 
 test('should be prefer options.disabled to NUMBAT_PROCESS_DISABLED', function (t) {
-  {
-    process.env.NUMBAT_PROCESS_DISABLED = false
-    const track = tracker()
-    const stop = numproc({metric: track.handler, disabled: true}, 500)
-    t.ok(stop.disabled === true, 'should be disabled')
-    stop()
-  }
+  process.env.NUMBAT_PROCESS_DISABLED = false
+  let track = tracker()
+  let stop = numproc({metric: track.handler, disabled: true}, 500)
+  t.ok(stop.disabled === true, 'should be disabled')
+  stop()
 
-  {
-    process.env.NUMBAT_PROCESS_DISABLED = true
-    const track = tracker()
-    const stop = numproc({metric: track.handler, disabled: false}, 500)
-    t.ok(stop.disabled === undefined, 'should NOT be disabled')
-    stop()
-  }
+  process.env.NUMBAT_PROCESS_DISABLED = true
+  track = tracker()
+  stop = numproc({metric: track.handler, disabled: false}, 500)
+  t.ok(stop.disabled === undefined, 'should NOT be disabled')
+  stop()
 
   t.end()
 })
