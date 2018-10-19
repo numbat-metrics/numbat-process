@@ -31,7 +31,7 @@
     "blocked": "^1.2.1",
     "cpu-percent": "^2.0.1",
     "end-of-stream": "^1.4.0",
-    "numbat-emitter": "^5.0.0",
+    "numbat-emitter": "^5.2.1",
     "procfs-stats": "~1.0.2"
   }
 }
